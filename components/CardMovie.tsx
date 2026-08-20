@@ -1,9 +1,9 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import Favorite from "../Screens/Favorite";
-import Details from "../Screens/Details";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Movie {
+  id: number;
   name: string;
   image?: {
     medium?: string;
@@ -16,15 +16,15 @@ interface Movie {
 
 interface CardMovieProps {
   filme: Movie;
-
+  navigation: any;
 }
 
-const CardMovie = ({ filme, }: CardMovieProps) => {
+const CardMovie = ({ filme, navigation }: CardMovieProps) => {
   return (
     <View style={styles.card}>
       <Image
         source={{
-          uri: filme.image?.medium || "https://via.placeholder.com/210x295",
+          uri: filme.image?.medium,
         }}
         style={styles.imagem}
       />
@@ -41,11 +41,18 @@ const CardMovie = ({ filme, }: CardMovieProps) => {
         <Text style={styles.nota}>
           ⭐ {filme.rating?.average ?? "Sem nota"}
         </Text>
-        <View style={styles.btn}>
-          <Pressable onPress={Details}>
-            <Text>Ver detalhes..</Text>
-          </Pressable>
-        </View>
+
+        <Pressable
+          onPress={() =>
+            navigation.navigate("Detalhes", {
+              id: filme.id,
+            })
+          }
+          style={styles.btn}
+        >
+          <Ionicons name="play-outline" size={18} color="black" />
+          <Text style={styles.text}>Ver detalhes</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -56,7 +63,7 @@ export default CardMovie;
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    height: 140,
+    height: 130,
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 10,
@@ -64,44 +71,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-
   imagem: {
     width: 80,
     height: 120,
     borderRadius: 8,
     resizeMode: "cover",
   },
-
   infoContainer: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: "center",
+    justifyContent: "space-between",
+    height: 120,
   },
-
   nome: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#1A1A1A",
   },
-
   genero: {
     fontSize: 13,
     color: "#666666",
-    marginTop: 4,
+    marginTop: 2,
   },
-
   nota: {
     fontSize: 14,
-    marginTop: 8,
     fontWeight: "600",
     color: "#333333",
   },
-
-  btn:{
-    backgroundColor:"red",
-    width:200,
-    height:20,
-    alignItems:"center",
-    right:-50
-  }
+  btn: {
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-start",
+    gap: 6,
+    marginTop: 4,
+    left:100
+  },
+  text: {
+    fontSize: 13,
+    color: "#000000ff",
+    fontWeight: "bold",
+  },
 });
