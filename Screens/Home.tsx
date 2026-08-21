@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, TextInput, View, Text } from "react-native";
+import { FlatList, StyleSheet, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CardMovie from "../components/CardMovie";
 
@@ -29,7 +29,7 @@ const Home = ({ navigation }: HomeProps) => {
   }, []);
 
   const filmesFiltrados = filme.filter((item) =>
-    item.name.toLowerCase().includes(nomeFilme.toLowerCase()),
+    item.name.toLowerCase().includes(nomeFilme.toLowerCase())
   );
 
   return (
@@ -73,5 +73,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
   },
-
 });

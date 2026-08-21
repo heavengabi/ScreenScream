@@ -1,6 +1,14 @@
-import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface Movie {
   id: number;
@@ -17,9 +25,71 @@ interface Movie {
 interface CardMovieProps {
   filme: Movie;
   navigation: any;
+  onFavoriteChange?: () => void;
 }
 
-const CardMovie = ({ filme, navigation }: CardMovieProps) => {
+const CardMovie = ({
+  filme,
+  navigation,
+  onFavoriteChange,
+}: CardMovieProps) => {
+  const [favoritado, setFavoritado] = useState(false);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      verificarFavorito();
+    }, [filme.id])
+  );
+
+  const verificarFavorito = async () => {
+    try {
+      const favoritosSalvos = await AsyncStorage.getItem("favoritos");
+
+      if (favoritosSalvos) {
+        const favoritos: Movie[] = JSON.parse(favoritosSalvos);
+        const existe = favoritos.some((item) => item.id === filme.id);
+        setFavoritado(existe);
+      } else {
+        setFavoritado(false);
+      }
+    } catch (error) {
+      console.log("Erro ao verificar favorito:", error);
+    }
+  };
+
+  const favoritar = async () => {
+    const estadoAnterior = favoritado;
+    const novoEstado = !favoritado;
+
+    // 1. Atualiza visualmente o ícone na hora
+    setFavoritado(novoEstado);
+
+    try {
+      const favoritosSalvos = await AsyncStorage.getItem("favoritos");
+      const favoritos: Movie[] = favoritosSalvos ? JSON.parse(favoritosSalvos) : [];
+
+      let novosFavoritos: Movie[];
+
+      if (estadoAnterior) {
+        novosFavoritos = favoritos.filter((item) => item.id !== filme.id);
+      } else {
+        novosFavoritos = [...favoritos, filme];
+      }
+
+      await AsyncStorage.setItem("favoritos", JSON.stringify(novosFavoritos));
+
+      // 2. Notifica a tela pai para atualizar a lista (usado na tela Favoritos)
+      if (onFavoriteChange) {
+        onFavoriteChange();
+      }
+    } catch (error) {
+      console.log("Erro ao favoritar:", error);
+      // Em caso de erro, reverte a interface
+      setFavoritado(estadoAnterior);
+    }
+  };
+
   return (
     <View style={styles.card}>
       <Image
@@ -39,7 +109,7 @@ const CardMovie = ({ filme, navigation }: CardMovieProps) => {
         </Text>
 
         <Text style={styles.nota}>
-          ⭐ {filme.rating?.average ?? "Sem nota"}
+          {filme.rating?.average ?? "Sem nota"}
         </Text>
 
         <Pressable
@@ -54,6 +124,14 @@ const CardMovie = ({ filme, navigation }: CardMovieProps) => {
           <Text style={styles.text}>Ver detalhes</Text>
         </Pressable>
       </View>
+
+      <Pressable onPress={favoritar} style={styles.favorito}>
+        <Ionicons
+          name={favoritado ? "heart" : "heart-outline"}
+          size={25}
+          color={favoritado ? "#E63946" : "#555"}
+        />
+      </Pressable>
     </View>
   );
 };
@@ -70,6 +148,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+    position: "relative",
   },
   imagem: {
     width: 80,
@@ -108,11 +187,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     gap: 6,
     marginTop: 4,
-    left:100
   },
   text: {
     fontSize: 13,
-    color: "#000000ff",
+    color: "#000000",
     fontWeight: "bold",
+  },
+  favorito: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    padding: 5,
   },
 });
