@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const Perfil = () => {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Text style={styles.titulo}>Meu Perfil</Text>
+      <Text style={styles.titulo}>Perfil</Text>
 
       <View style={styles.card}>
         <View style={styles.avatarBorder}>
@@ -15,8 +15,9 @@ const Perfil = () => {
           />
         </View>
 
-        <Text style={styles.nome}>Gabriela</Text>
-        <Text style={styles.email}>gabriela@email.com</Text>
+        <Text style={styles.nome}>Seu nome</Text>
+        <Text style={styles.email}>Seu email</Text>
+        <Text style = {styles.desc}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur nesciunt libero harum. Est eveniet assumenda optio ducimus minus cum, ea beatae ex fugiat voluptatum reprehenderit architecto expedita molestiae natus atque.</Text>
       </View>
     </SafeAreaView>
   );
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     padding: 3,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: "#E63946", // Cor combinando com o coração dos favoritos
+    borderColor: "#E63946", 
     marginBottom: 12,
   },
   foto: {
@@ -65,8 +66,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   email: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#888888",
     marginTop: 4,
   },
+  desc:{
+    color:"white",
+    textAlign:"center",
+    fontSize:20,
+    top:10
+  }
 });

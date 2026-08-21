@@ -79,13 +79,11 @@ const CardMovie = ({
 
       await AsyncStorage.setItem("favoritos", JSON.stringify(novosFavoritos));
 
-      // 2. Notifica a tela pai para atualizar a lista (usado na tela Favoritos)
       if (onFavoriteChange) {
         onFavoriteChange();
       }
     } catch (error) {
       console.log("Erro ao favoritar:", error);
-      // Em caso de erro, reverte a interface
       setFavoritado(estadoAnterior);
     }
   };
